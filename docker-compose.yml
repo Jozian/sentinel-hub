@@ -1,0 +1,17 @@
+---
+version: '3.8'
+
+services:
+  sentinel-hub:
+    image: verveine/sentinel-hub:latest
+    build:
+      args:
+        GENESIS_CHECKSUM: c7613d401c363d41a8f9663f59a957c80248bc20f40aae00e4eab77f258fd506
+      context: .
+    environment:
+      CONFIG_SEEDS: "418dfc81f6c776b3c752a900f87aa62002d1039a@51.68.247.99:26656,4f4a5f3b249a8c9e9760094c5742380071fa5ef5@207.180.213.123:26656,60ffb98f377f3ffe4a72958919de9ebb98492ca1@51.68.247.98:26656,859e6c949cb69c2d8d64cc78696b4571c888ed7e@178.33.150.1:26656"
+    networks:
+      - sentinel
+
+networks:
+  sentinel:

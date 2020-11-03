@@ -1,0 +1,57 @@
+#!/bin/sh
+
+CMD="${@}"
+SENTINEL_BASEDIR="/srv/sentinel-hub/.sentinel-hubd"
+GENESIS_FILE="${SENTINEL_BASEDIR}/config/genesis.json"
+SENTINEL_CONFIG="${SENTINEL_BASEDIR}/config/config.toml"
+
+set -e
+
+if [ ! -d "${SENTINEL_BASEDIR}/config" ] \
+    || [ ! -d "${SENTINEL_BASEDIR}/config" ]; then
+    echo "The sentinel-hub was not initialized! Running 'sentinel-hubd init'..."
+    sentinel-hubd init ${MONIKER} --chain-id ${CHAIN_ID}
+fi
+
+if [ -z "$(cat ${SENTINEL_CONFIG} | grep -E 'seeds\s*=\s*"'"${CONFIG_SEEDS}"'"')" ]; then
+    echo "Seeds aren't configured! Updating the config file with the seeds..."
+    sed -i -E -e 's/seeds\s*=\s*".*"/seeds = "'"${CONFIG_SEEDS}"'"/' \
+        ${SENTINEL_CONFIG}
+fi
+
+file_checksum=$(sha256sum ${GENESIS_FILE} | cut -d " " -f1)
+if [ "${file_checksum}" != "${GENESIS_CHECKSUM}" ]; then
+    echo "The genesis.json file does not match with the checksum set!"
+    echo "Downloading the recommended genesis.json..."
+    curl -o ${GENESIS_FILE} \
+        https://raw.githubusercontent.com/sentinel-official/testnets/master/turing-2/genesis.json
+fi
+
+if [ "${CMD%${CMD#create-account}}" = "create-account" ]; then
+    exec sentinel-hub-cli keys add ${ACCOUNT_NAME}
+elif [ "${CMD%${CMD#create-validator}}" = "create-validator" ]; then
+    exec sentinel-hub-cli tx staking create-validator \
+        --moniker ${MONIKER} \
+        --amount ${AMOUNT} \
+        --fees ${FEES} \
+        --gas ${GAS} \
+        --pubkey ${PUBKEY} \
+        --chain-id ${CHAIN_ID} \
+        --node ${NODE} \
+        --from ${FROM} \
+        --commission-max-change-rate ${COMMISSION_MAX_CHANGE_RATE}\
+        --commission-max-rate ${COMMISSION_MAX_RATE} \
+        --commission-rate ${COMMISSION_RATE} \
+        --min-self-delegation ${MIN_SELF_DELEGATION} \
+        --broadcast-mode ${BROADCAST_MODE}
+elif [ "${CMD%${CMD#add-genesis-account}}" = "add-genesis-account" ]; then
+    exec sentinel-hubd add-genesis-account ${ACCOUNT_NAME} ${AMOUNT}
+elif [ "${CMD%${CMD#create-offline-genesis-transaction}}" = "create-offline-genesis-transaction" ]; then
+    exec sentinel-hubd gentx --name ${ACCOUNT_NAME} \
+        --amount ${AMOUNT} \
+        --commission-rate ${COMMISSION_RATE} \
+        --commission-max-rate ${COMMISSION_MAX_RATE} \
+        --commission-max-change-rate ${COMMISSION_MAX_CHANGE_RATE}
+fi
+
+exec sentinel-hubd "${@}"

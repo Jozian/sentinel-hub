@@ -1,0 +1,8 @@
+---
+version: '3.8'
+
+services:
+  sentinel-hub:
+    env_file: .env
+    volumes:
+      - ../hub-data:/srv/sentinel-hub/.sentinel-hubd
