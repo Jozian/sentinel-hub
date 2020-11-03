@@ -29,6 +29,7 @@ fi
 if [ "${CMD%${CMD#create-account}}" = "create-account" ]; then
     exec sentinel-hub-cli keys add ${ACCOUNT_NAME}
 elif [ "${CMD%${CMD#create-validator}}" = "create-validator" ]; then
+    PUBKEY=$(sentinel-hubd tendermint show-validator)
     exec sentinel-hub-cli tx staking create-validator \
         --moniker ${MONIKER} \
         --amount ${AMOUNT} \
