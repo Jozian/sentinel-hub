@@ -54,4 +54,15 @@ elif [ "${CMD%${CMD#create-offline-genesis-transaction}}" = "create-offline-gene
         --commission-max-change-rate ${COMMISSION_MAX_CHANGE_RATE}
 fi
 
+if [ "${CMD%${CMD#start}}" = "start" ]; then
+    if [ "${SYNC_DELAY_ISSUES}" = "y" ]; then
+        exec sentinel-hubd start \
+            --log_level "main:info,state:info,x/node:info,x/subscription:info,x/session:info,*:error"
+    else
+        exec sentinel-hubd start \
+            --log_level "main:info,state:info,x/node:info,x/subscription:info,x/session:info,*:error" \
+            --invar-check-period 1
+    fi
+fi
+
 exec sentinel-hubd "${@}"
