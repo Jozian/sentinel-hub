@@ -23,8 +23,7 @@ file_checksum=$(sha256sum ${GENESIS_FILE} | cut -d " " -f1)
 if [ "${file_checksum}" != "${GENESIS_CHECKSUM}" ]; then
     echo "The genesis.json file does not match with the checksum set!"
     echo "Downloading the recommended genesis.json..."
-    curl -o ${GENESIS_FILE} \
-        https://raw.githubusercontent.com/sentinel-official/testnets/master/turing-2/genesis.json
+    curl -o ${GENESIS_FILE} ${GENESIS_URL}
 fi
 
 if [ "${CMD%${CMD#create-account}}" = "create-account" ]; then

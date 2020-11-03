@@ -6,6 +6,8 @@ COPY . /root/sentinel-hub
 RUN make build
 
 FROM debian:buster AS sentinel-hub
+ARG GENESIS_URL
+ENV GENESIS_URL=${GENESIS_URL}
 ARG GENESIS_CHECKSUM
 ENV GENESIS_CHECKSUM=${GENESIS_CHECKSUM}
 RUN adduser --uid 1000 --disabled-password --gecos '' --home /srv/sentinel-hub sentinel-hub
