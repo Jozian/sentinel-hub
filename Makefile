@@ -57,4 +57,54 @@ dep_verify:
 	@echo "--> Ensure dependencies have not been modified"
 	@go mod verify
 
+build-docker:
+	@docker-compose build --pull
+
+build-docker-no-cache:
+	@docker-compose build --pull --no-cache
+
+up:
+	@sudo sysctl -w fs.file-max=10000000
+	@docker-compose up
+
+
+up-d:
+	@sudo sysctl -w fs.file-max=10000000
+	@docker-compose up -d
+
+down:
+	@docker-compose down
+
+up-prod: network
+	@sudo sysctl -w fs.file-max=10000000
+	@docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up
+
+up-prod-d: network
+	@sudo sysctl -w fs.file-max=10000000
+	@docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up -d
+
+down-prod:
+	@docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml down --remove-orphans
+
+shell:
+	@docker-compose exec sentinel-hub bash
+
+reset:
+	@docker-compose exec sentinel-hub sentinel-hubd unsafe-reset-all
+
+check-pub-key:
+	@docker-compose exec sentinel-hub sentinel-hubd tendermint show-validator
+
+create-account:
+	@docker-compose exec sentinel-hub entrypoint create-account
+
+create-validator:
+	@docker-compose exec sentinel-hub entrypoint create-validator
+
+add-genesis-account:
+	@docker-compose exec sentinel-hub entrypoint add-genesis-account
+
+create-offline-genesis-transaction:
+	@docker-compose exec sentinel-hub entrypoint create-offline-genesis-transaction
+
 .PHONY: all build install test benchmark dep_verify test_sim_hub_fast test_sim_benchmark
