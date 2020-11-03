@@ -14,8 +14,6 @@ RUN adduser --uid 1000 --disabled-password --gecos '' --home /srv/sentinel-hub s
 RUN apt-get -yq update \
         && DEBIAN_FRONTEND=noninteractive apt-get install -y \
                 unattended-upgrades \
-                # ssl certs to external services
-                ca-certificates \
                 curl \
         && rm -rf /var/lib/apt/lists/* \
         && apt-get clean
