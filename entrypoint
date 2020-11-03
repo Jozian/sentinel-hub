@@ -38,12 +38,12 @@ elif [ "${CMD%${CMD#create-validator}}" = "create-validator" ]; then
         --pubkey ${PUBKEY} \
         --chain-id ${CHAIN_ID} \
         --node ${NODE} \
-        --from ${FROM} \
         --commission-max-change-rate ${COMMISSION_MAX_CHANGE_RATE}\
         --commission-max-rate ${COMMISSION_MAX_RATE} \
         --commission-rate ${COMMISSION_RATE} \
         --min-self-delegation ${MIN_SELF_DELEGATION} \
-        --broadcast-mode ${BROADCAST_MODE}
+        --broadcast-mode ${BROADCAST_MODE} \
+        --from ${ACCOUNT_NAME}
 elif [ "${CMD%${CMD#add-genesis-account}}" = "add-genesis-account" ]; then
     exec sentinel-hubd add-genesis-account ${ACCOUNT_NAME} ${AMOUNT}
 elif [ "${CMD%${CMD#create-offline-genesis-transaction}}" = "create-offline-genesis-transaction" ]; then
