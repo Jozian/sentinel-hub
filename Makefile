@@ -48,29 +48,43 @@ mod_verify:
 	@echo "Ensure dependencies have not been modified"
 	@go mod verify
 
-build-docker:
+env-dev:
+	$(eval ENV_EXISTS := $(shell [ -e ./.env ] && echo 1 || echo 0))
+	if [ ${ENV_EXISTS} -eq 0 ]; then \
+	    echo "Copy env.example to .env and make your customizations"; \
+	    exit 1; \
+	fi
+
+env-prod:
+	$(eval ENV_EXISTS := $(shell [ -e ./.env.prod ] && echo 1 || echo 0))
+	if [ ${ENV_EXISTS} -eq 0 ]; then \
+	    echo "Copy env.example to .env.prod and make your customizations"; \
+	    exit 1; \
+	fi
+
+build-docker: env-dev
 	@docker-compose build --pull
 
-build-docker-no-cache:
+build-docker-no-cache: end-dev
 	@docker-compose build --pull --no-cache
 
-up:
+up: env-dev
 	@sudo sysctl -w fs.file-max=10000000
 	@docker-compose up
 
 
-up-d:
+up-d: env-dev
 	@sudo sysctl -w fs.file-max=10000000
 	@docker-compose up -d
 
 down:
 	@docker-compose down
 
-up-prod: network
+up-prod: env-prod
 	@sudo sysctl -w fs.file-max=10000000
 	@docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up
 
-up-prod-d: network
+up-prod-d: env-prod
 	@sudo sysctl -w fs.file-max=10000000
 	@docker-compose -f ./docker-compose.yml -f ./docker-compose.prod.yml up -d
 
