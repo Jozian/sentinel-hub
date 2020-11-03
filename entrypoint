@@ -37,7 +37,6 @@ elif [ "${CMD%${CMD#create-validator}}" = "create-validator" ]; then
         --gas ${GAS} \
         --pubkey ${PUBKEY} \
         --chain-id ${CHAIN_ID} \
-        --node ${NODE} \
         --commission-max-change-rate ${COMMISSION_MAX_CHANGE_RATE}\
         --commission-max-rate ${COMMISSION_MAX_RATE} \
         --commission-rate ${COMMISSION_RATE} \
