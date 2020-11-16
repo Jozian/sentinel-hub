@@ -94,6 +94,9 @@ down-prod:
 shell:
 	@docker-compose exec sentinel-hub bash
 
+status:
+	@docker-compose exec sentinel-hub curl http://localhost:26657/status
+
 reset:
 	@docker-compose exec sentinel-hub sentinel-hubd unsafe-reset-all
 
