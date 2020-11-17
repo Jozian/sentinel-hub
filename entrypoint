@@ -19,6 +19,12 @@ if [ -z "$(cat ${SENTINEL_CONFIG} | grep -E 'seeds\s*=\s*"'"${CONFIG_SEEDS}"'"')
         ${SENTINEL_CONFIG}
 fi
 
+if [ -z "$(cat ${SENTINEL_CONFIG} | grep -E 'laddr\s*=\s*"tcp:\/\/0.0.0.0:26657"')" ]; then
+    echo "Seeds aren't configured! Updating the config file with the seeds..."
+    sed -i -E -e 's/^laddr\s*=\s*"tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/' \
+        ${SENTINEL_CONFIG}
+fi
+
 file_checksum=$(sha256sum ${GENESIS_FILE} | cut -d " " -f1)
 if [ "${file_checksum}" != "${GENESIS_CHECKSUM}" ]; then
     echo "The genesis.json file does not match with the checksum set!"
