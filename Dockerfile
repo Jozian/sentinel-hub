@@ -24,5 +24,6 @@ USER sentinel-hub
 RUN mkdir -p /srv/sentinel-hub/.sentinel-hubd
 VOLUME /srv/sentinel-hub/.sentinel-hubd
 EXPOSE 26656
+EXPOSE 26657
 ENTRYPOINT ["entrypoint"]
 CMD ["start"]
